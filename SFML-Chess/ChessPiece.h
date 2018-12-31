@@ -28,5 +28,7 @@ public:
 	std::string to_string();
 	int get_value();
 	~ChessPiece();
+private:
+	static int get_position_factor(PieceType type, int x, int y);
 };
 

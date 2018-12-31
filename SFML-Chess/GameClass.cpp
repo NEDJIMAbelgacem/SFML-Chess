@@ -72,10 +72,13 @@ std::pair<int, std::pair<std::pair<int, int>, std::pair<int, int>>> GameClass::m
 		for (std::pair<std::pair<int, int>, std::pair<int, int>> p : possible_moves) {
 			std::pair<int, int>& from = p.first;
 			std::pair<int, int>& to = p.second;
+
 			ChessPiece* killed_piece = this->try_move(from, to);
 			current_player = current_player == 'W' ? 'B' : 'W';
 			this->update_game();
+
 			std::pair<int, std::pair<std::pair<int, int>, std::pair<int, int>>> result = minimax(alpha, beta, depth - 1, false);
+
 			this->undo_move(from, to, killed_piece);
 			current_player = current_player == 'W' ? 'B' : 'W';
 			this->update_game();
@@ -207,8 +210,10 @@ void GameClass::select_piece_at(int x, int y) {
 				std::cout << "minimax bot move : " << "(" << p.first.first << ", " << p.first.second << ") (" << p.second.first << ", " << p.second.second << ")" << std::endl;
 				std::cout << "minimax score : " << res.first << std::endl;
 				std::cout << "visited leafs count : " << nb_leafs << std::endl;
-				this->move_piece(p.first, p.second);
-				current_player = current_player == 'W' ? 'B' : 'W';
+				if (p.first.first != -1 && p.first.second != -1) {
+					this->move_piece(p.first, p.second);
+					current_player = current_player == 'W' ? 'B' : 'W';
+				}
 				update_game();
 			}
 			this->grabbed_piece_x = -1;
@@ -314,14 +319,14 @@ std::string GameClass::get_game_state() {
 }
 
 std::string GameClass::get_current_player() {
-	if (this->current_player == 'W') return "WHITE";
-	return "BLACK";
+	if (this->current_player == 'W') return "BLACK";
+	return "WHITE";
 }
 
 int GameClass::evaluate_game() {
 	int score = 0;
-	for (ChessPiece* p : this->players_pieces['W']) score += p->get_value() * tiles_factors[p->x][p->y];
-	for (ChessPiece* p : this->players_pieces['B']) score -= p->get_value() * tiles_factors[p->x][p->y];
+	for (ChessPiece* p : this->players_pieces['W']) score += p->get_value() + tiles_factors[p->x][p->y];
+	for (ChessPiece* p : this->players_pieces['B']) score -= p->get_value() + tiles_factors[p->x][p->y];
 	return score;
 }
 

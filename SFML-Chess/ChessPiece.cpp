@@ -12,7 +12,7 @@ ChessPiece::ChessPiece(int x, int y, ChessPiece::PieceType type, char color)
 	pawn_advance_move = false;
 	this->x = x;
 	this->y = y;
-	std::string texture_path = std::string() + "Sprites/" + (color == 'W' ? "white" : "black");
+	std::string texture_path = std::string() + "Sprites/" + (color == 'B' ? "white" : "black");
 	switch (type) {
 	case King:
 		texture_path += "King.png";
@@ -284,15 +284,90 @@ std::string ChessPiece::to_string() {
 int ChessPiece::get_value() {
 	if (this->killed) return 0;
 	switch (type) {
-	case King: return 0;
-	case Queen: return 9;
-	case Rook: return 5;
-	case Bishop: return 3;
-	case Knight: return 3;
-	case Pawn: return 1;
+	case King: return 20000 + ChessPiece::get_position_factor(this->type, x, y);
+	case Queen: return 900 + ChessPiece::get_position_factor(this->type, x, y);;
+	case Rook: return 500 + ChessPiece::get_position_factor(this->type, x, y);;
+	case Bishop: return 330 + ChessPiece::get_position_factor(this->type, x, y);;
+	case Knight: return 320 + ChessPiece::get_position_factor(this->type, x, y);;
+	case Pawn: return 100 + ChessPiece::get_position_factor(this->type, x, y);;
 	}
 	return 0;
 }
+
+int ChessPiece::get_position_factor(PieceType type, int x, int y) {
+	int pawn_factor[8][8] = {
+		{ 0,  0,  0,  0,  0,  0,  0,  0},
+		{50, 50, 50, 50, 50, 50, 50, 50},
+		{10, 10, 20, 30, 30, 20, 10, 10},
+		{ 5,  5, 10, 25, 25, 10,  5,  5},
+		{ 0,  0,  0, 20, 20,  0,  0,  0},
+		{ 5, -5,-10,  0,  0,-10, -5,  5},
+		{ 5, 10, 10,-20,-20, 10, 10,  5},
+		{ 0,  0,  0,  0,  0,  0,  0,  0}
+	};
+	int bishop_factor[8][8] = {
+		{-20,-10,-10,-10,-10,-10,-10,-20},
+		{-10,  0,  0,  0,  0,  0,  0,-10},
+		{-10,  0,  5, 10, 10,  5,  0,-10},
+		{-10,  5,  5, 10, 10,  5,  5,-10},
+		{-10,  0, 10, 10, 10, 10,  0,-10},
+		{-10, 10, 10, 10, 10, 10, 10,-10},
+		{-10,  5,  0,  0,  0,  0,  5,-10},
+		{-20,-10,-10,-10,-10,-10,-10,-20}
+	};
+	int knight_factor[8][8] = {
+		{-50,-40,-30,-30,-30,-30,-40,-50},
+		{-40,-20,  0,  0,  0,  0,-20,-40},
+		{-30,  0, 10, 15, 15, 10,  0,-30},
+		{-30,  5, 15, 20, 20, 15,  5,-30},
+		{-30,  0, 15, 20, 20, 15,  0,-30},
+		{-30,  5, 10, 15, 15, 10,  5,-30},
+		{-40,-20,  0,  5,  5,  0,-20,-40},
+		{-50,-40,-30,-30,-30,-30,-40,-50}
+	};
+
+	int rook_factor[8][8] = {
+		{ 0,  0,  0,  0,  0,  0,  0,  0},
+		{ 5, 10, 10, 10, 10, 10, 10,  5},
+		{-5,  0,  0,  0,  0,  0,  0, -5},
+		{-5,  0,  0,  0,  0,  0,  0, -5},
+		{-5,  0,  0,  0,  0,  0,  0, -5},
+		{-5,  0,  0,  0,  0,  0,  0, -5},
+		{-5,  0,  0,  0,  0,  0,  0, -5},
+		{ 0,  0,  0,  0,  0,  0,  0,  0}
+	};
+
+	int queen_factor[8][8] = {
+		{-20,-10,-10, -5, -5,-10,-10,-20},
+		{-10,  0,  0,  0,  0,  0,  0,-10},
+		{-10,  0,  5,  5,  5,  5,  0,-10},
+		{ -5,  0,  5,  5,  5,  5,  0, -5},
+		{  0,  0,  5,  5,  5,  5,  0, -5},
+		{-10,  5,  5,  5,  5,  5,  0,-10},
+		{-10,  0,  5,  0,  0,  0,  0,-10},
+		{-20,-10,-10, -5, -5,-10,-10,-20}
+	};
+	int king_factor[8][8] = {
+		{-30,-40,-40,-50,-50,-40,-40,-30},
+		{-30,-40,-40,-50,-50,-40,-40,-30},
+		{-30,-40,-40,-50,-50,-40,-40,-30,},
+		{-30,-40,-40,-50,-50,-40,-40,-30},
+		{-20,-30,-30,-40,-40,-30,-30,-20},
+		{-10,-20,-20,-20,-20,-20,-20,-10},
+		{ 20, 20,  0,  0,  0,  0, 20, 20},
+		{ 20, 30, 10,  0,  0, 10, 30, 20}
+	};
+
+	switch (type) {
+	case King: return king_factor[y][x];
+	case Queen: return queen_factor[y][x];
+	case Rook: return rook_factor[y][x];
+	case Bishop: return bishop_factor[y][x];
+	case Knight: return knight_factor[y][x];
+	case Pawn: return pawn_factor[y][x];
+	}
+	return 0;
+};
 
 ChessPiece::~ChessPiece()
 {
