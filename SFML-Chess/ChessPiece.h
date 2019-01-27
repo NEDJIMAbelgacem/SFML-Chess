@@ -29,6 +29,6 @@ public:
 	int get_value();
 	~ChessPiece();
 private:
-	static int get_position_factor(PieceType type, int x, int y);
+	int get_position_factor(PieceType type, int x, int y);
 };
 

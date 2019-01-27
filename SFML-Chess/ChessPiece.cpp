@@ -357,14 +357,25 @@ int ChessPiece::get_position_factor(PieceType type, int x, int y) {
 		{ 20, 20,  0,  0,  0,  0, 20, 20},
 		{ 20, 30, 10,  0,  0, 10, 30, 20}
 	};
-
-	switch (type) {
-	case King: return king_factor[y][x];
-	case Queen: return queen_factor[y][x];
-	case Rook: return rook_factor[y][x];
-	case Bishop: return bishop_factor[y][x];
-	case Knight: return knight_factor[y][x];
-	case Pawn: return pawn_factor[y][x];
+	if (this->color == 'B') {
+		switch (type) {
+		case King: return king_factor[y][x];
+		case Queen: return queen_factor[y][x];
+		case Rook: return rook_factor[y][x];
+		case Bishop: return bishop_factor[y][x];
+		case Knight: return knight_factor[y][x];
+		case Pawn: return pawn_factor[y][x];
+		}
+	}
+	else {
+		switch (type) {
+		case King: return king_factor[7-y][x];
+		case Queen: return queen_factor[7-y][x];
+		case Rook: return rook_factor[7-y][x];
+		case Bishop: return bishop_factor[7-y][x];
+		case Knight: return knight_factor[7-y][x];
+		case Pawn: return pawn_factor[7-y][x];
+		}
 	}
 	return 0;
 };
